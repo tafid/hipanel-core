@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * HiPanel core package
  *
@@ -9,6 +11,8 @@
  */
 
 namespace hipanel\components;
+
+use yii\base\InvalidConfigException;
 
 /**
  * Extends the base Yii2 request with support for the HTTP QUERY method —
@@ -33,13 +37,14 @@ class Request extends \yii\web\Request
      * Behavior for all other methods is unchanged from the parent class.
      *
      * @return array the request GET parameter values.
+     * @throws InvalidConfigException
      */
     public function getQueryParams()
     {
         $params = parent::getQueryParams();
 
         if ($this->getMethod() === 'QUERY') {
-            $params = array_merge($params, (array) $this->getBodyParams());
+            $params = array_merge($params, (array)$this->getBodyParams());
         }
 
         return $params;

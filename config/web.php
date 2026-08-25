@@ -33,6 +33,7 @@ return [
     'components' => [
         'timezone' => ['class' => hipanel\components\Timezone::class],
         'request' => [
+            'class' => \hipanel\components\Request::class,
             'enableCsrfCookie' => false,
             'cookieValidationKey' => $params['cookieValidationKey'],
         ],
