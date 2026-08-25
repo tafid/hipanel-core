@@ -28,6 +28,11 @@ abstract class DataExportAction extends Action
     public function run(): Response
     {
         $request = $this->controller->request;
+        // $request->get() already includes HTTP QUERY method bodies when the consuming
+        // app's request component is hipanel\components\Request (its getQueryParams()
+        // merges the QUERY body over the URL query string). POST is kept here for
+        // callers that still submit large parameter sets (e.g. a big `ids` selection)
+        // via POST instead of QUERY.
         $params = $request->get(null, []) + $request->post(null, []);
 
         $exporter = $this->exporterFactory->build($this->exportType);
