@@ -32,6 +32,26 @@ class Request extends \yii\web\Request
     }
 
     /**
+     * QUERY's CSRF-safe exemption must only apply to a genuine QUERY request —
+     * block any `_method`/`X-Http-Method-Override` attempt to spoof into it,
+     * since those are ordinary write requests (e.g. a forged cross-site POST)
+     * that would otherwise bypass CSRF validation entirely.
+     *
+     * @return string the request method (e.g. GET, POST, HEAD, PUT, PATCH, DELETE, QUERY).
+     */
+    public function getMethod()
+    {
+        $rawMethod = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
+        if ($rawMethod === 'QUERY') {
+            return 'QUERY';
+        }
+
+        $method = parent::getMethod();
+
+        return $method === 'QUERY' ? $rawMethod : $method;
+    }
+
+    /**
      * For QUERY requests, merges the parsed request body into the query params,
      * with body values taking precedence over the URL query string on key collision.
      * Behavior for all other methods is unchanged from the parent class.
