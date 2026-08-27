@@ -35,6 +35,7 @@ return [
         'timezone' => ['class' => hipanel\components\Timezone::class],
         'csrfRetry' => ['class' => hipanel\components\CsrfRetry::class],
         'request' => [
+            'class' => \hipanel\components\Request::class,
             'enableCsrfCookie' => false,
             'cookieValidationKey' => $params['cookieValidationKey'],
         ],

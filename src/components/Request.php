@@ -1,0 +1,72 @@
+<?php
+
+declare(strict_types=1);
+/**
+ * HiPanel core package
+ *
+ * @link      https://hipanel.com/
+ * @package   hipanel-core
+ * @license   BSD-3-Clause
+ * @copyright Copyright (c) 2014-2019, HiQDev (http://hiqdev.com/)
+ */
+
+namespace hipanel\components;
+
+use yii\base\InvalidConfigException;
+
+/**
+ * Extends the base Yii2 request with support for the HTTP QUERY method —
+ * a safe, idempotent method that carries its query in the request body.
+ *
+ * @see https://www.ietf.org/archive/id/draft-ietf-httpbis-safe-method-w-body-04.html
+ */
+class Request extends \yii\web\Request
+{
+    public function init()
+    {
+        parent::init();
+
+        if (!in_array('QUERY', $this->csrfTokenSafeMethods, true)) {
+            $this->csrfTokenSafeMethods[] = 'QUERY';
+        }
+    }
+
+    /**
+     * QUERY's CSRF-safe exemption must only apply to a genuine QUERY request —
+     * block any `_method`/`X-Http-Method-Override` attempt to spoof into it,
+     * since those are ordinary write requests (e.g. a forged cross-site POST)
+     * that would otherwise bypass CSRF validation entirely.
+     *
+     * @return string the request method (e.g. GET, POST, HEAD, PUT, PATCH, DELETE, QUERY).
+     */
+    public function getMethod()
+    {
+        $rawMethod = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
+        if ($rawMethod === 'QUERY') {
+            return 'QUERY';
+        }
+
+        $method = parent::getMethod();
+
+        return $method === 'QUERY' ? $rawMethod : $method;
+    }
+
+    /**
+     * For QUERY requests, merges the parsed request body into the query params,
+     * with body values taking precedence over the URL query string on key collision.
+     * Behavior for all other methods is unchanged from the parent class.
+     *
+     * @return array the request GET parameter values.
+     * @throws InvalidConfigException
+     */
+    public function getQueryParams()
+    {
+        $params = parent::getQueryParams();
+
+        if ($this->getMethod() === 'QUERY') {
+            $params = array_merge($params, (array)$this->getBodyParams());
+        }
+
+        return $params;
+    }
+}
