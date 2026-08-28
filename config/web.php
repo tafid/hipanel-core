@@ -79,36 +79,21 @@ return [
                 ],
             ],
         ],
-        // A closure, not a plain array: hiam.site must stay a bare hostname (see the
-        // '@HIAM_SITE' alias above), but HiamClient::init() unconditionally prepends
-        // 'https://' to any 'site' value that doesn't already contain '://' - breaking
-        // local dev (no real TLS). Deciding the scheme from YII_ENV doesn't work either:
-        // beta/k8s deployments still terminate real TLS despite not being YII_ENV=prod,
-        // so "not prod -> http" is wrong there too. This whole array is otherwise
-        // resolved once at composer-config-plugin build time (no live request exists
-        // yet), so a closure is the only way to check the *actual* current request's
-        // scheme instead of guessing from environment.
-        'authClientCollection' => function () use ($params) {
-            // A Closure component definition is a factory whose return value IS the
-            // component instance (yii\di\Container::invoke() uses it as-is) - unlike a
-            // plain config array, it does NOT get passed through Yii::createObject()
-            // for us, so we have to call that ourselves here.
-            return Yii::createObject([
-                'class' => \hiam\authclient\Collection::class,
-                'clients' => [
-                    'hiam' => array_filter([
-                        'class' => \hiam\authclient\HiamClient::class,
-                        'scope' => $params['hiam.scope'],
-                        'site' => (Yii::$app->request->getIsSecureConnection() ? 'https://' : 'http://') . $params['hiam.site'],
-                        'authUrl' => $params['hiam.authUrl'],
-                        'tokenUrl' => $params['hiam.tokenUrl'],
-                        'apiBaseUrl' => $params['hiam.apiBaseUrl'],
-                        'clientId' => $params['hiam.client_id'],
-                        'clientSecret' => $params['hiam.client_secret'],
-                    ]),
-                ],
-            ]);
-        },
+        'authClientCollection' => [
+            'class' => \hiam\authclient\Collection::class,
+            'clients' => [
+                'hiam' => array_filter([
+                    'class' => \hiam\authclient\HiamClient::class,
+                    'scope' => $params['hiam.scope'],
+                    'site' => $params['hiam.site'],
+                    'authUrl' => $params['hiam.authUrl'],
+                    'tokenUrl' => $params['hiam.tokenUrl'],
+                    'apiBaseUrl' => $params['hiam.apiBaseUrl'],
+                    'clientId' => $params['hiam.client_id'],
+                    'clientSecret' => $params['hiam.client_secret'],
+                ]),
+            ],
+        ],
         'urlManager' => [
             'class' => \hipanel\components\UrlManager::class,
             'enablePrettyUrl' => true,
