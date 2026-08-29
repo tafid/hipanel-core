@@ -5,7 +5,7 @@ $widget = $this->context;
 ?>
 <div class="horizontal-view">
     <div class="row horizontal-content clearfix">
-        <div class="col-md-2">
+        <div class="col-lg-2">
             <div class="content-sidebar">
                 <div class="content-sidebar__inner clearfix">
                     <?= $widget->renderExportProgress() ?>
@@ -28,7 +28,7 @@ $widget = $this->context;
                 </div>
             </div>
         </div>
-        <div class="col-md-10">
+        <div class="col-lg-10">
             <div class="box box-widget">
                 <div class="box-body no-padding">
                     <div class="mailbox-controls">
