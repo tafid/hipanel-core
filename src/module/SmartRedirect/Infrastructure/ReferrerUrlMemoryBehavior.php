@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace hipanel\module\SmartRedirect\Infrastructure;
 
@@ -15,6 +17,13 @@ use yii\helpers\Url;
  */
 class ReferrerUrlMemoryBehavior extends Behavior
 {
+    /**
+     * Substrings that mark a referrer URL as suitable to be remembered as "previous URL".
+     *
+     * @var string[]
+     */
+    public array $suitableReferrerPatterns = ['/index', '/view'];
+
     public function events(): array
     {
         return [
@@ -32,11 +41,10 @@ class ReferrerUrlMemoryBehavior extends Behavior
         }
     }
 
-    public function getPreviousUrl(Action $action): ?string
+    private function suitableReferrer(string $referrer): bool
     {
-        $key = $this->getUrlKey($this->owner, $action);
+        return array_any($this->suitableReferrerPatterns, fn($pattern) => str_contains($referrer, $pattern));
 
-        return Url::previous($key);
     }
 
     private function getUrlKey(Controller $controller, Action $action): string
@@ -44,8 +52,10 @@ class ReferrerUrlMemoryBehavior extends Behavior
         return implode('.', [$controller->id, $action->parent->id ?? $action->id]);
     }
 
-    private function suitableReferrer(string $referrer): bool
+    public function getPreviousUrl(Action $action): ?string
     {
-        return str_contains($referrer, '/index'); // todo: make it configurable?
+        $key = $this->getUrlKey($this->owner, $action);
+
+        return Url::previous($key);
     }
 }

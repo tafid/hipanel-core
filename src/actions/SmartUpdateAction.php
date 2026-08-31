@@ -13,6 +13,7 @@ namespace hipanel\actions;
 use hipanel\module\SmartRedirect\Application\ActionRedirectResolver;
 use hipanel\base\Model;
 use hipanel\base\SearchModelTrait;
+use hipanel\module\SmartRedirect\Domain\PreferPreviousRedirectPolicy;
 use hiqdev\hiart\ActiveDataProvider;
 use Yii;
 use yii\web\BadRequestHttpException;
@@ -163,6 +164,7 @@ class SmartUpdateAction extends SwitchAction
                     'class' => RedirectAction::class,
                     'url' => [
                         'class' => ActionRedirectResolver::class,
+                        'policy' => PreferPreviousRedirectPolicy::class,
                     ],
                 ],
                 'error'   => [
