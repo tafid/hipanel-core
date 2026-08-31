@@ -237,6 +237,38 @@ JS
             .horizontal-view .content-sidebar__inner .btn-group > a.btn {
                 width: 100%;
             }
+            @media (min-width: 1200px) {
+                .horizontal-view .horizontal-content {
+                    display: flex;
+                }
+                .horizontal-view .horizontal-content > .col-lg-2 {
+                    flex: 0 0 280px;
+                    width: 280px;
+                }
+                .horizontal-view .horizontal-content > .col-lg-10 {
+                    flex: 1 1 auto;
+                    width: auto;
+                }
+            }
+            .horizontal-view .content-sidebar .select2-selection--multiple .select2-selection__rendered:has(.select2-selection__choice) {
+                display: flex;
+                flex-direction: column;
+            }
+            .horizontal-view .content-sidebar .select2-selection--multiple .select2-selection__choice {
+                display: flex;
+                align-items: center;
+                width: 100%;
+                max-width: 100%;
+                box-sizing: border-box;
+                margin-left: 0;
+            }
+            .horizontal-view .content-sidebar .select2-selection--multiple .select2-selection__choice__display {
+                flex: 1 1 auto;
+                min-width: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
 CSS
         );
     }
